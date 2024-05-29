@@ -6,7 +6,7 @@ import numpy as np
 # col1, col2 = st.columns(2)
 
 df = pd.read_excel('./Master_List.xlsx', sheet_name='Bathroom')
-df['is_widget'] = False
+df['With_Me'] = False
 item_list = df['Item'].unique()
 location_list = df['Location'].unique()
 
@@ -31,22 +31,17 @@ if selected_location and not selected_items:
 
     items_in_unit = df_display.shape[0]
 
+elif selected_items and not selected_location:
+    df_display = df[df['Item'].isin(selected_items)]
 elif selected_location and selected_items:
-    df_display = df[(df['Location'] == selected_location) & (df['Item'] == selected_items)]
+    df_display = df[(df['Location'] == selected_location) & (df['Item'].isin(selected_items))]
 
 
 else:
     df_display = df
 
-edited_df = st.data_editor(df_display, num_rows="dynamic", key = 'my_data_editor')
+
+edited_df = st.data_editor(df_display[['Item', 'Location', 'Health', 'With_Me']], num_rows="dynamic", key = 'my_data_editor')
 
 
-if edited_df is not None:
-    edited_rows = st.session_state["my_data_editor"]["edited_rows"]
-        
 
-if edited_df is not None:
-    for row_index, edited_values in edited_rows.items():
-        df.loc[row_index] = edited_values
-
-    st.data_editor(df.tail())
